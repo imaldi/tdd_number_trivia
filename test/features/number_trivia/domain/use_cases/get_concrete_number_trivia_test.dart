@@ -22,7 +22,7 @@ void main() {
     usecase = GetConcreteNumberTrivia(mockNumberTriviaRepository);
   });
 
-  final tNumber = 1;
+  const tNumber = 1;
   final tNumberTrivia = NumberTrivia(number: 1, text: 'test');
 
   test(
@@ -44,7 +44,7 @@ void main() {
       // Disini bener2 kita panggil useCase nya (yang mana usecase tersebut manggil satu method repository contract),
       // kebetulan disini method yang sebelumnya namanya execute
       // udah di ganti namanya jadi call, dan dalam dart bisa panggil dengan cara ini (object())
-      final result = await usecase(number: tNumber);
+      final result = await usecase(const Params(number: tNumber));
       // UseCase should simply return whatever was returned from the Repository
       // disini kita melakukan perbandingan antara result real dan result yang diharapkan
       // argumen pertama result real, argumen kedua result expected
