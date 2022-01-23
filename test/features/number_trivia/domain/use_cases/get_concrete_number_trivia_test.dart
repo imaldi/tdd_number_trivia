@@ -33,15 +33,30 @@ void main() {
       // the Right "side" of Either containing a test NumberTrivia object.
 
       // There was an error here, how to fix it below this file:
+          // kita pastikan ketika method .getConcreteNumberTrivia mock nya terpanggil,
+          // selalu return Tipe sebelah kanan dari Either yang di return method tersebut,
+          // yaitu type/class NumberTrivia dengan value tNumberTrivia
+          // Pertanyaannnya kenapa harus pakai Right dan ga langsung pakai NumberTrivia aja??
+          // Masih belum terjawab (pasti soal FP ini)
       when(mockNumberTriviaRepository.getConcreteNumberTrivia(any))
           .thenAnswer((_) async => Right(tNumberTrivia));
       // The "act" phase of the test. Call the not-yet-existent method.
-      final result = await usecase.execute(number: tNumber);
+      // Disini bener2 kita panggil useCase nya (yang mana usecase tersebut manggil satu method repository contract),
+      // kebetulan disini method yang sebelumnya namanya execute
+      // udah di ganti namanya jadi call, dan dalam dart bisa panggil dengan cara ini (object())
+      final result = await usecase(number: tNumber);
       // UseCase should simply return whatever was returned from the Repository
+      // disini kita melakukan perbandingan antara result real dan result yang diharapkan
+      // argumen pertama result real, argumen kedua result expected
       expect(result, Right(tNumberTrivia));
       // Verify that the method has been called on the Repository
+      // kita pakai verify ini (dari library mockito) untuk memastikan bahwa method getConcreteNumberTrivia
+      // di panggil dengan argumen tNumber (ini karena ketika di when kita pakai argumentMatcher "any"
+      // sehingga ketika method getConcreteNumberTrivia dipanggil dengan argumen apapun, selalu me-return
+      // value yang tetap (sesuai yang di beri di thenAnswer())
       verify(mockNumberTriviaRepository.getConcreteNumberTrivia(tNumber));
       // Only the above method should be called and nothing more.
+      // pastikan ga terpanggil / ga ada interaksi apapun lagi
       verifyNoMoreInteractions(mockNumberTriviaRepository);
     },
   );
