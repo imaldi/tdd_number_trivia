@@ -22,13 +22,24 @@ class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
   // TODO change to non nullable after implementing
   @override
   Future<Either<Failure, NumberTrivia?>?>? getConcreteNumberTrivia(int number) async {
-    networkInfo.isConnected;
+    if(
+    (await networkInfo.isConnected) ?? true
+    ){
     try{
       final remoteTrivia = await remoteDataSource.getConcreteNumberTrivia(number);
       localDataSource.cacheNumberTrivia(remoteTrivia);
       return Right(remoteTrivia);
     } on ServerException {
       return Left(ServerFailure());
+    }
+    } else {
+      try{
+        final localTrivia = await localDataSource.getLastNumberTrivia();
+        return Right(localTrivia);
+      } on CacheException {
+        return Left(CacheFailure());
+      }
+
     }
   }
 
