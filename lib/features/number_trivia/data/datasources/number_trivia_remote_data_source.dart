@@ -10,5 +10,5 @@ abstract class NumberTriviaRemoteDataSource {
   /// Calls the http://numbersapi.com/random endpoint.
   ///
   /// Throws a [ServerException] for all error codes.
-  Future<NumberTriviaModel> getRandomNumberTrivia();
+  Future<NumberTriviaModel>? getRandomNumberTrivia();
 }
