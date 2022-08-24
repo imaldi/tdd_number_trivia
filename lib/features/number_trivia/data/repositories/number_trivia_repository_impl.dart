@@ -19,8 +19,9 @@ class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
     required this.networkInfo,
   });
 
+  // TODO change to non nullable after implementing
   @override
-  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int number) async {
+  Future<Either<Failure, NumberTrivia?>?>? getConcreteNumberTrivia(int number) async {
     networkInfo.isConnected;
     try{
       final remoteTrivia = await remoteDataSource.getConcreteNumberTrivia(number);

@@ -7,5 +7,6 @@ abstract class NumberTriviaLocalDataSource {
   /// Throws [NoLocalDataException] if no cached data is present.
   Future<NumberTriviaModel> getLastNumberTrivia();
 
-  Future<void> cacheNumberTrivia(NumberTriviaModel triviaToCache);
+  // TODO change to non nullable after implementing
+  Future<void>? cacheNumberTrivia(NumberTriviaModel? triviaToCache);
 }

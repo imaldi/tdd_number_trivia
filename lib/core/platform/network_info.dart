@@ -1,3 +1,4 @@
 abstract class NetworkInfo {
-  Future<bool> get isConnected;
+  // TODO change to non nullable after implementing
+  Future<bool>? get isConnected;
 }
