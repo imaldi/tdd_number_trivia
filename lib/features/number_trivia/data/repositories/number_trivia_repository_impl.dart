@@ -29,25 +29,6 @@ class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
     return await _getTrivia(() {
       return remoteDataSource.getConcreteNumberTrivia(number);
     });
-    // if(
-    // (await networkInfo.isConnected) ?? true
-    // ){
-    // try{
-    //   final remoteTrivia = await remoteDataSource.getConcreteNumberTrivia(number);
-    //   localDataSource.cacheNumberTrivia(remoteTrivia);
-    //   return Right(remoteTrivia);
-    // } on ServerException {
-    //   return Left(ServerFailure());
-    // }
-    // } else {
-    //   try{
-    //     final localTrivia = await localDataSource.getLastNumberTrivia();
-    //     return Right(localTrivia);
-    //   } on CacheException {
-    //     return Left(CacheFailure());
-    //   }
-    //
-    // }
   }
 
   // TODO change to non nullable after implementing
@@ -56,22 +37,6 @@ class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
     return await _getTrivia(() {
       return remoteDataSource.getRandomNumberTrivia();
     });
-    // if ((await networkInfo.isConnected) ?? true) {
-    //   try {
-    //     final remoteTrivia = await remoteDataSource.getRandomNumberTrivia();
-    //     localDataSource.cacheNumberTrivia(remoteTrivia);
-    //     return Right(remoteTrivia);
-    //   } on ServerException {
-    //     return Left(ServerFailure());
-    //   }
-    // } else {
-    //   try {
-    //     final localTrivia = await localDataSource.getLastNumberTrivia();
-    //     return Right(localTrivia);
-    //   } on CacheException {
-    //     return Left(CacheFailure());
-    //   }
-    // }
   }
 
   // TODO change to non nullable after implementing
