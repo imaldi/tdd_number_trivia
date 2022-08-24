@@ -9,8 +9,7 @@ import '../../../../core/network/network_info.dart';
 import '../datasources/number_trivia_local_data_source.dart';
 import '../datasources/number_trivia_remote_data_source.dart';
 
-// TODO change to non nullable after implementing
-typedef Future<NumberTriviaModel>? _ConcreteOrRandomChooser();
+typedef Future<NumberTriviaModel> _ConcreteOrRandomChooser();
 
 class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
   final NumberTriviaRemoteDataSource remoteDataSource;
@@ -23,27 +22,25 @@ class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
     required this.networkInfo,
   });
 
-  // TODO change to non nullable after implementing
   @override
-  Future<Either<Failure, NumberTrivia?>?>? getConcreteNumberTrivia(int number) async {
+  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
+      int number) async {
     return await _getTrivia(() {
       return remoteDataSource.getConcreteNumberTrivia(number);
     });
   }
 
-  // TODO change to non nullable after implementing
   @override
-  Future<Either<Failure, NumberTrivia?>?>? getRandomNumberTrivia() async {
+  Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
     return await _getTrivia(() {
       return remoteDataSource.getRandomNumberTrivia();
     });
   }
 
-  // TODO change to non nullable after implementing
-  Future<Either<Failure, NumberTrivia?>?>? _getTrivia(
-      _ConcreteOrRandomChooser getConcreteOrRandom,
-      ) async {
-    if ((await networkInfo.isConnected) ?? false) {
+  Future<Either<Failure, NumberTrivia>> _getTrivia(
+    _ConcreteOrRandomChooser getConcreteOrRandom,
+  ) async {
+    if (await networkInfo.isConnected) {
       try {
         final remoteTrivia = await getConcreteOrRandom();
         localDataSource.cacheNumberTrivia(remoteTrivia);
@@ -60,5 +57,4 @@ class NumberTriviaRepositoryImpl extends NumberTriviaRepository {
       }
     }
   }
-
 }

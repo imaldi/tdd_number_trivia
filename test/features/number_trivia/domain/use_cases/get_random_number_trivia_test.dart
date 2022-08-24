@@ -9,7 +9,6 @@ import 'package:tdd_number_trivia/features/number_trivia/domain/use_cases/get_ra
 
 import 'get_random_number_trivia_test.mocks.dart';
 
-
 @GenerateMocks([MockNumberTriviaRepository])
 class MockNumberTriviaRepository extends Mock
     implements NumberTriviaRepository {}
@@ -23,19 +22,19 @@ void main() {
     usecase = GetRandomNumberTrivia(mockNumberTriviaRepository);
   });
 
-  final tNumberTrivia = NumberTrivia(number: 1, text: 'test');
+  const tNumberTrivia = NumberTrivia(number: 1, text: 'test');
 
   test(
     'should get trivia from the repository',
-        () async {
+    () async {
       // arrange
       when(mockNumberTriviaRepository.getRandomNumberTrivia())
-          .thenAnswer((_) async => Right(tNumberTrivia));
+          .thenAnswer((_) async => const Right(tNumberTrivia));
       // act
       // Since random number doesn't require any parameters, we pass in NoParams.
       final result = await usecase(NoParams());
       // assert
-      expect(result, Right(tNumberTrivia));
+      expect(result, const Right(tNumberTrivia));
       verify(mockNumberTriviaRepository.getRandomNumberTrivia());
       verifyNoMoreInteractions(mockNumberTriviaRepository);
     },
