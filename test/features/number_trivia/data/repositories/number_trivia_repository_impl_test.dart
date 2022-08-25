@@ -57,7 +57,7 @@ void main() {
   group('getConcreteNumberTrivia', () {
     /// DATA FOR THE MOCKS AND ASSERTIONS
     /// We'll use these three variables throughout all the tests
-    final tNumber = 1;
+    const tNumber = 1;
     final tNumberTriviaModel =
         NumberTriviaModel(number: tNumber, text: 'test trivia');
     final NumberTrivia tNumberTrivia = tNumberTriviaModel;
@@ -74,9 +74,6 @@ void main() {
     });
 
     runTestsOnline(() {
-      /// This setup only to the 'device is online' group
-      setUp(() =>
-          when(mockNetworkInfo.isConnected).thenAnswer((_) async => true));
       test(
           'should return remote data when the call to remote data source is success',
           () async {
@@ -125,8 +122,6 @@ void main() {
     });
 
     runTestsOffline(() {
-      setUp(() => when(mockNetworkInfo.isConnected)
-          .thenAnswer((realInvocation) async => false));
 
       test(
           'should return last locally cached data when the cached data is present',
@@ -180,9 +175,6 @@ void main() {
     });
 
     runTestsOnline(() {
-      /// This setup only to the 'device is online' group
-      setUp(() =>
-          when(mockNetworkInfo.isConnected).thenAnswer((_) async => true));
       test(
           'should return remote data when the call to remote data source is success',
           () async {
@@ -231,8 +223,6 @@ void main() {
     });
 
     runTestsOffline(() {
-      setUp(() => when(mockNetworkInfo.isConnected)
-          .thenAnswer((realInvocation) async => false));
 
       test(
           'should return last locally cached data when the cached data is present',
