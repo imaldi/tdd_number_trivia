@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:tdd_number_trivia/core/network/network_info.dart';
 import 'package:mockito/annotations.dart';
+import 'package:tdd_number_trivia/core/network/network_info.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
 
 @GenerateMocks([DataConnectionChecker])
