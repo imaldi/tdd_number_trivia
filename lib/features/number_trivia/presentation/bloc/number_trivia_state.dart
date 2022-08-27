@@ -33,7 +33,7 @@ class Loaded extends NumberTriviaState {
 class Error extends NumberTriviaState {
   final String message;
 
-  Error({required this.message});
+  const Error({required this.message});
 
   @override
   List<Object?> get props => [];

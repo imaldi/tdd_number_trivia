@@ -15,7 +15,7 @@ import 'package:tdd_number_trivia/features/number_trivia/presentation/bloc/numbe
 ])
 import 'number_trivia_bloc_test.mocks.dart';
 
-void main(){
+void main() {
   late NumberTriviaBloc bloc;
   late MockGetConcreteNumberTrivia mockGetConcreteNumberTrivia;
   late MockGetRandomNumberTrivia mockGetRandomNumberTrivia;
@@ -56,16 +56,36 @@ void main(){
 
     test(
       'should call the InputConverter to validate and convert the string to an unsigned integer',
-          () async {
+      () async {
         // arrange
-            setUpMockInputConverterSuccess();
-            setUpMockGetConcreteTriviaSuccess();
+        setUpMockInputConverterSuccess();
+        setUpMockGetConcreteTriviaSuccess();
         // act
         bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+        /// We await untilCalled() because the logic inside a Bloc is triggered through a Stream<Event>
+        /// which is, of course, asynchronous itself. Had we not awaited until the stringToUnsignedInteger has been called,
+        /// the verification would always fail, since we'd verify before the code had a chance to execute.
         await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
         // assert
         verify(mockInputConverter.stringToUnsignedInteger(tNumberString));
       },
     );
+
+    test('should emit [Error] when the input is invalid', () async {
+      /// arrange
+      when(mockInputConverter.stringToUnsignedInteger(any))
+          .thenReturn(Left(InvalidInputFailure()));
+
+      /// act
+      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+      /// We await untilCalled() because the logic inside a Bloc is triggered through a Stream<Event>
+      /// which is, of course, asynchronous itself. Had we not awaited until the stringToUnsignedInteger has been called,
+      /// the verification would always fail, since we'd verify before the code had a chance to execute.
+      await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
+
+      /// assert
+      const expected = Error(message: invalidInputFailureMessage);
+      expect(bloc.state, expected);
+    });
   });
 }
