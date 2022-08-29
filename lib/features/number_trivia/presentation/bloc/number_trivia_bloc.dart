@@ -29,17 +29,44 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
   })  : getConcreteNumberTrivia = concrete,
         getRandomNumberTrivia = random,
         super(Empty()) {
-    on<GetTriviaForConcreteNumber>((event, emit) {
-      // if(event is GetTriviaForConcreteNumber){
+    // ignore: void_checks
+    on<GetTriviaForConcreteNumber>((event, emit) async {
+
       final inputEither =
           inputConverter.stringToUnsignedInteger(event.numberString);
 
-      // emit(Error(message: invalidInputFailureMessage));
-      emit(inputEither.fold(
-        (failure) => const Error(message: invalidInputFailureMessage),
-        (integer) =>  Loaded(trivia: NumberTrivia(text: '', number: integer)),
-      ));
-      // }
+
+
+      // var errorOrLoaded = await
+      inputEither.fold(
+        (failure) async {
+
+          emit(const Error(message: invalidInputFailureMessage));
+          return const Error(message: invalidInputFailureMessage);
+          },
+        // (integer) =>  Loaded(trivia: NumberTrivia(text: '', number: integer)),
+        (integer) async {
+          // getConcreteNumberTrivia(Params(number: integer));
+          final failureOrNumberTrivia = await getConcreteNumberTrivia(Params(number: integer));
+
+          var errOrLoad = failureOrNumberTrivia.fold((l) {
+            emit(const Error(message: "No Trivia"));
+            return const Error(message: "No Trivia");
+          }, (r) {
+            emit(Loaded(trivia: r));
+            return Loaded(trivia: r);
+          });
+          emit(errOrLoad);
+          return errOrLoad;
+
+          // return
+          //   Loaded(trivia: const NumberTrivia(text: "default", number: 1));
+          // return Loaded(trivia: failureOrNumberTrivia);
+          // return failureOrNumberTrivia;
+        },
+      );
+      // emit(errorOrLoaded);
+
     });
   }
 }

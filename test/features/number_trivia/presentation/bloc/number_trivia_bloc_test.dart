@@ -15,6 +15,7 @@ import 'package:tdd_number_trivia/features/number_trivia/presentation/bloc/numbe
 ])
 import 'number_trivia_bloc_test.mocks.dart';
 
+
 void main() {
   late NumberTriviaBloc bloc;
   late MockGetConcreteNumberTrivia mockGetConcreteNumberTrivia;
@@ -51,7 +52,7 @@ void main() {
             .thenReturn(Right(tNumberParsed));
 
     void setUpMockGetConcreteTriviaSuccess() =>
-        when(mockGetConcreteNumberTrivia(any))
+        when(mockGetConcreteNumberTrivia.call(any))
             .thenAnswer((_) async => const Right(tNumberTrivia));
 
     test(
@@ -62,6 +63,7 @@ void main() {
         setUpMockGetConcreteTriviaSuccess();
         // act
         bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+
         /// We await untilCalled() because the logic inside a Bloc is triggered through a Stream<Event>
         /// which is, of course, asynchronous itself. Had we not awaited until the stringToUnsignedInteger has been called,
         /// the verification would always fail, since we'd verify before the code had a chance to execute.
@@ -87,5 +89,23 @@ void main() {
       const expected = Error(message: invalidInputFailureMessage);
       expect(bloc.state, expected);
     });
+
+    test(
+      'should get data from the concrete use case',
+          () async {
+        // arrange
+            setUpMockInputConverterSuccess();
+            setUpMockGetConcreteTriviaSuccess();
+        // when(mockInputConverter.stringToUnsignedInteger(any))
+        //     .thenReturn(Right(tNumberParsed));
+        // when(mockGetConcreteNumberTrivia.call(any))
+        //     .thenAnswer((_) async => const Right(tNumberTrivia));
+        // act
+        bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+        await untilCalled(mockGetConcreteNumberTrivia.call(any));
+        // assert
+        verify(mockGetConcreteNumberTrivia.call(Params(number: tNumberParsed)));
+      },
+    );
   });
 }
