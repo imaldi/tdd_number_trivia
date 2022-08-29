@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:tdd_number_trivia/core/error/failures.dart';
 import 'package:tdd_number_trivia/core/util/input_converter.dart';
 import 'package:tdd_number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:tdd_number_trivia/features/number_trivia/domain/use_cases/get_concrete_number_trivia.dart';
@@ -14,7 +15,6 @@ import 'package:tdd_number_trivia/features/number_trivia/presentation/bloc/numbe
   MockSpec<InputConverter>(),
 ])
 import 'number_trivia_bloc_test.mocks.dart';
-
 
 void main() {
   late NumberTriviaBloc bloc;
@@ -47,9 +47,12 @@ void main() {
     // NumberTrivia instance is needed too, of course
     const tNumberTrivia = NumberTrivia(number: 1, text: 'test trivia');
 
-    void setUpMockInputConverterSuccess() =>
-        when(mockInputConverter.stringToUnsignedInteger(any))
-            .thenReturn(Right(tNumberParsed));
+    void setUpMockInputConverterSuccess() {
+      when(mockInputConverter.stringToUnsignedInteger(any))
+          .thenReturn(Right(tNumberParsed));
+      // when(mockInputConverter.stringToUnsignedInteger(any).fold((l) => any, (r) => any))
+      // .thenReturn(null);
+    }
 
     void setUpMockGetConcreteTriviaSuccess() =>
         when(mockGetConcreteNumberTrivia.call(any))
@@ -80,6 +83,7 @@ void main() {
 
       /// act
       bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+
       /// We await untilCalled() because the logic inside a Bloc is triggered through a Stream<Event>
       /// which is, of course, asynchronous itself. Had we not awaited until the stringToUnsignedInteger has been called,
       /// the verification would always fail, since we'd verify before the code had a chance to execute.
@@ -92,10 +96,10 @@ void main() {
 
     test(
       'should get data from the concrete use case',
-          () async {
+      () async {
         // arrange
-            setUpMockInputConverterSuccess();
-            setUpMockGetConcreteTriviaSuccess();
+        setUpMockInputConverterSuccess();
+        setUpMockGetConcreteTriviaSuccess();
         // when(mockInputConverter.stringToUnsignedInteger(any))
         //     .thenReturn(Right(tNumberParsed));
         // when(mockGetConcreteNumberTrivia.call(any))
@@ -105,6 +109,56 @@ void main() {
         await untilCalled(mockGetConcreteNumberTrivia.call(any));
         // assert
         verify(mockGetConcreteNumberTrivia.call(Params(number: tNumberParsed)));
+      },
+    );
+
+    test(
+      'should emit [Loading, Loaded] when data is gotten successfully',
+      () async {
+        // arrange
+        setUpMockInputConverterSuccess();
+        // when(mockInputConverter.stringToUnsignedInteger(any).fold<Event>).thenReturn((ifLeft, ifRight) => Loaded(trivia: tNumberTrivia));
+
+        when(mockGetConcreteNumberTrivia.call(any))
+            .thenAnswer((_) async => const Right(tNumberTrivia));
+
+        // assert later
+        // final expected = [
+        //   Empty(),
+        //   Loading(),
+        //   Loaded(trivia: tNumberTrivia),
+        // ];
+        // act
+        bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+        await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
+        // await untilCalled(mockInputConverter.stringToUnsignedInteger(any).fold);
+
+        expect(bloc.state, Loading());
+        await untilCalled(mockGetConcreteNumberTrivia.call(any));
+        expect(bloc.state, Loaded(trivia: tNumberTrivia));
+      },
+    );
+
+    test(
+      'should emit [Loading, Error] when getting data fails',
+      () async {
+        // arrange
+        setUpMockInputConverterSuccess();
+        when(mockGetConcreteNumberTrivia.call(any))
+            .thenAnswer((_) async => Left(ServerFailure()));
+        // assert later
+        // final expected = [
+        //   Empty(),
+        //   Loading(),
+        //   Error(message: SERVER_FAILURE_MESSAGE),
+        // ];
+        // act
+        bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+        await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
+        expect(bloc.state, Loading());
+
+        await untilCalled(mockGetConcreteNumberTrivia.call(any));
+        expect(bloc.state, const Error(message: serverFailureMessage));
       },
     );
   });
