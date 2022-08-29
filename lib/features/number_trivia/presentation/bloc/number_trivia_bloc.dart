@@ -42,7 +42,6 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         (failure) async {
 
           emit(const Error(message: invalidInputFailureMessage));
-          return const Error(message: invalidInputFailureMessage);
           },
         // (integer) =>  Loaded(trivia: NumberTrivia(text: '', number: integer)),
         (integer) async {
@@ -50,19 +49,12 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
           final failureOrNumberTrivia = await getConcreteNumberTrivia(Params(number: integer));
 
           var errOrLoad = failureOrNumberTrivia.fold((l) {
-            emit(const Error(message: "No Trivia"));
             return const Error(message: "No Trivia");
           }, (r) {
-            emit(Loaded(trivia: r));
             return Loaded(trivia: r);
           });
           emit(errOrLoad);
-          return errOrLoad;
-
-          // return
-          //   Loaded(trivia: const NumberTrivia(text: "default", number: 1));
-          // return Loaded(trivia: failureOrNumberTrivia);
-          // return failureOrNumberTrivia;
+          // return errOrLoad;
         },
       );
       // emit(errorOrLoaded);
