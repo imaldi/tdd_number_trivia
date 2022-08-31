@@ -35,9 +35,8 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
           inputConverter.stringToUnsignedInteger(event.numberString);
       emit(Loading());
 
-
       // var errorOrLoaded = await
-      inputEither.fold(
+      await inputEither.fold(
         (failure) async {
           emit(const Error(message: invalidInputFailureMessage));
         },
@@ -58,6 +57,10 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         },
       );
       // emit(errorOrLoaded);
-    });
+    },
+    // on<GetRandomNumberTrivia>((event, emit) {
+    //
+    // });
+    );
   }
 }
